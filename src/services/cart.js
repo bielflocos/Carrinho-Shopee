@@ -1,62 +1,39 @@
-//quais açoes meu carrinho pode fazer
-
-//CASOS DE USO
-// ✅ -> adicionar item no carrinho
-async function addItem(userCart, item) {
-  userCart.push(item);
+async function addItem(cart, item) {
+  cart.push(item);
 }
 
-// ✅ -> calcular o total do carrinho
-async function calculateTotal(userCart) {
-  console.log("\nShopee Cart TOTAL IS:");
+async function displayCart(cart) {
+  console.log("\n🛒 SEU CARRINHO:");
 
-  const result = userCart.reduce((total, item) => total + item.subtotal(), 0);
-  console.log(`🎁Total: ${result}`);
-}
-
-// -> deletar item do carrinho
-async function deleteItem(userCart, name) {
-  const index = userCart.findIndex((item) => item.name === name);
-
-  if (index !== -1) {
-    userCart.splice(index, 1);
-  }
-}
-
-// -> ✅ remover um item - diminui um item
-async function removeItem(userCart, item) {
-  //1. encontrar o indice do item
-  const indexFound = userCart.findIndex((p) => p.name === item.name);
-
-  //2. Caso não encontre o item
-  if (indexFound == -1) {
-    console.log("item não encontrado");
+  if (cart.length === 0) {
+    console.log("Carrinho vazio.");
     return;
   }
 
-  //3. item > 1 subtrair um item
-  if (userCart[indexFound].quantity > 1) {
-    userCart[indexFound].quantity -= 1;
-    return;
-  }
-
-  //4. caso item = 1 deletar o item
-  if (userCart[indexFound].quantity == 1) {
-    userCart.splice(indexFound, 1);
-    return;
-  }
-}
-
-// ✅ mostra todos os items do carrinho
-async function displaycart(userCart) {
-  console.log("\nShopee cart list:");
-  userCart.forEach((item, index) => {
+  cart.forEach((item, index) => {
     console.log(
-      `${index + 1}. ${item.name} - R$ ${item.price} | ${
-        item.quantity
-      }x | Subtotal = ${item.subtotal()}`
+      `${index + 1}. ${item.name} | R$ ${item.price.toFixed(2)} | ${item.quantity}x | Subtotal: R$ ${item.subtotal().toFixed(2)}`
     );
   });
 }
 
-export { addItem, calculateTotal, deleteItem, removeItem, displaycart };
+async function removeItem(cart, index) {
+  if (index < 0 || index >= cart.length) {
+    console.log("❌ Item inválido.");
+    return;
+  }
+
+  if (cart[index].quantity > 1) {
+    cart[index].quantity -= 1;
+    console.log("➖ Quantidade reduzida.");
+  } else {
+    cart.splice(index, 1);
+    console.log("🗑️ Item removido.");
+  }
+}
+
+async function calculateTotal(cart) {
+  return cart.reduce((total, item) => total + item.subtotal(), 0);
+}
+
+export { addItem, displayCart, removeItem, calculateTotal };
